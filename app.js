@@ -20,8 +20,8 @@
   - finally, clean up interface into something pretty
 */
 
-const x = `<i class="fa-solid fa-xmark"></i>`;
-const o = `<i class="fa-solid fa-o"></i>`;
+const xMarkHTML = `<i class="fa-solid fa-xmark"></i>`;
+const oMarkHTML = `<i class="fa-solid fa-o"></i>`;
 
 const gameBoard = (() => {
   const board = [
@@ -35,7 +35,7 @@ const gameBoard = (() => {
   };
 })();
 
-const gameManager = () => {
+const gameManager = (() => {
   /**
    * Determines player's turn:
    * {player 1: -1}
@@ -43,15 +43,57 @@ const gameManager = () => {
    */
   const turn = -1;
 
-  // const nextTurn = () => {
-  //   // check for winner
-  //   turn = -turn;
-  // };
+  const nextTurn = () => {
+    // TODO: check for winner
+    turn = -turn;
+    return turn;
+  };
 
   // const resetGame = () => {};
   return {};
-};
+})();
 
-const UI = () => {};
+const UI = (() => {
+  const board = document.querySelector(".board");
+
+  const clearBoard = () => {
+    board.querySelectorAll(".tile").forEach((tile) => {
+      hideWinningColor(tile);
+      tile.innerHTML = "";
+    });
+  };
+
+  const mark = (y, x, player) => {
+    let tile = board.querySelector("#" + CSS.escape(y) + "-" + CSS.escape(x));
+    if (player > 0) {
+      tile.innerHTML = oMarkHTML;
+    } else if (player < 0) {
+      tile.innerHTML = xMarkHTML;
+    }
+  };
+
+  const showWinningLine = (tiles) => {
+    tiles.forEach((tile) => {
+      showWinningColor(tile);
+    });
+  };
+
+  const showWinningColor = (tile) => {
+    if (!tile.classList.contains("winner")) {
+      tile.classList.add("winner");
+    }
+  };
+
+  const hideWinningColor = (tile) => {
+    if (tile.classList.contains("winner")) {
+      tile.classList.remove("winner");
+    }
+  };
+
+  return {
+    clearBoard,
+    mark,
+  };
+})();
 
 // const player = () => {};
