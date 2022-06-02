@@ -44,7 +44,8 @@ const gameManager = (() => {
   const turn = -1;
 
   const nextTurn = () => {
-    // TODO: check for winner
+    // TODO: first, check for winner
+    // exit if a win is found
     turn = -turn;
     return turn;
   };
@@ -55,9 +56,10 @@ const gameManager = (() => {
 
 const UI = (() => {
   const board = document.querySelector(".board");
+  const tiles = board.querySelectorAll(".tile");
 
   const clearBoard = () => {
-    board.querySelectorAll(".tile").forEach((tile) => {
+    tiles.forEach((tile) => {
       hideWinningColor(tile);
       tile.innerHTML = "";
     });
@@ -72,8 +74,8 @@ const UI = (() => {
     }
   };
 
-  const showWinningLine = (tiles) => {
-    tiles.forEach((tile) => {
+  const showWinningLine = (line) => {
+    line.forEach((tile) => {
       showWinningColor(tile);
     });
   };
@@ -97,3 +99,11 @@ const UI = (() => {
 })();
 
 // const player = () => {};
+
+document.querySelectorAll(".tile").forEach((tile) => {
+  tile.addEventListener("click", () => {
+    let y = Number(tile.id[0]);
+    let x = Number(tile.id[2]);
+    UI.mark(y, x, -1);
+  });
+});
