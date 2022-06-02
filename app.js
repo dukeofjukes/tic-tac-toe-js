@@ -20,6 +20,9 @@
   - finally, clean up interface into something pretty
 */
 
+const x = `<i class="fa-solid fa-xmark"></i>`;
+const o = `<i class="fa-solid fa-o"></i>`;
+
 const gameBoard = (() => {
   const board = [
     [0, 0, 0],
@@ -46,6 +49,9 @@ const gameManager = () => {
   // };
 
   // const resetGame = () => {};
+  return {};
 };
+
+const UI = () => {};
 
 // const player = () => {};

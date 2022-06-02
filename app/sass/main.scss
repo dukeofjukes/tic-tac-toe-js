@@ -1,6 +1,11 @@
+@import "./nord.scss";
+
 $font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-$primary-background-color: black;
-$primary-text-color: white;
+$primary-background-color: $nord0;
+$primary-text-color: $nord4;
+$board-line-color: $nord3;
+$winning-color: $nord14;
+$board-line-attr: 4px solid;
 
 * {
   font-family: $font-stack;
@@ -9,4 +14,47 @@ $primary-text-color: white;
 body {
   background-color: $primary-background-color;
   color: $primary-text-color;
+  font-size: 16px;
+}
+
+.board {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 400px;
+  margin: 200px auto;
+
+  .tile {
+    display: grid;
+    padding: 1rem;
+    align-items: center;
+    justify-items: center;
+    font-size: 6rem;
+    width: 7rem;
+    height: 7rem;
+    border: $board-line-attr $board-line-color;
+    margin: 0;
+  }
+
+  .winner {
+    color: $winning-color;
+  }
+
+  .remove-left {
+    border-left: $board-line-attr transparent;
+  }
+
+  .remove-top {
+    border-top: $board-line-attr transparent;
+  }
+
+  .remove-bottom {
+    border-bottom: $board-line-attr transparent;
+  }
+
+  .remove-right {
+    border-right: $board-line-attr transparent;
+  }
 }
