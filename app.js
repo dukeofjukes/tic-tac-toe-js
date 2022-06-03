@@ -30,15 +30,14 @@ const gameBoard = (() => {
     });
   };
 
-  const mark = (y, x, player) => {
-    if (y < 0 || y > 2 || x < 0 || x > 2) {
+  const mark = (r, c, player) => {
+    if (r < 0 || r > 2 || c < 0 || c > 2) {
       return;
     }
-    board[y][x] = Number(player);
+    board[r][c] = Number(player);
   };
 
   const checkWin = () => {
-    console.log(board);
     let wins = [];
 
     // check rows
@@ -105,50 +104,6 @@ const gameBoard = (() => {
   };
 })();
 
-/**
- * Handles game logic and mediates between the game board data and the UI.
- */
-const gameManager = (() => {
-  /**
-   * Determines player's turn:
-   * {player 1: -1}
-   * {player 2: 1}
-   */
-  let turn = -1;
-
-  const getCurrentPlayer = () => {
-    return turn;
-  };
-
-  const nextTurn = () => {
-    // check for win and update UI.
-    let wins = gameBoard.checkWin();
-    console.log("wins: ", wins);
-    if (wins.length > 0) {
-      wins.forEach((line) => {
-        line.forEach((tileCoord) => {
-          console.log(tileCoord);
-          let tile = document.querySelector(
-            "#" + CSS.escape(tileCoord[0]) + "-" + CSS.escape(tileCoord[1])
-          );
-          UI.showWinningColor(tile);
-        });
-      });
-    }
-
-    // exit if a win is found
-    turn = -turn;
-    return turn;
-  };
-
-  // const resetGame = () => {};
-
-  return {
-    getCurrentPlayer,
-    nextTurn,
-  };
-})();
-
 const UI = (() => {
   const board = document.querySelector(".board");
   const tiles = board.querySelectorAll(".tile");
@@ -162,8 +117,8 @@ const UI = (() => {
     });
   };
 
-  const mark = (y, x, player) => {
-    let tile = board.querySelector("#" + CSS.escape(y) + "-" + CSS.escape(x));
+  const mark = (r, c, player) => {
+    let tile = board.querySelector("#" + CSS.escape(r) + "-" + CSS.escape(c));
     if (player > 0) {
       tile.innerHTML = oMarkHTML;
     } else if (player < 0) {
@@ -190,16 +145,75 @@ const UI = (() => {
   };
 })();
 
+/**
+ * Handles game logic and mediates between the game board data and the UI.
+ */
+const gameManager = (() => {
+  /**
+   * Determines player's turn:
+   * {player 1: -1}
+   * {player 2: 1}
+   */
+  let turn = -1;
+  let winner = 0;
+
+  const getWinner = () => winner;
+
+  const getCurrentPlayer = () => {
+    return turn;
+  };
+
+  const nextTurn = () => {
+    let wins = gameBoard.checkWin();
+
+    if (wins.length > 0) {
+      winner = getCurrentPlayer();
+      wins.forEach((line) => {
+        line.forEach((tileCoord) => {
+          let tile = document.querySelector(
+            "#" + CSS.escape(tileCoord[0]) + "-" + CSS.escape(tileCoord[1])
+          );
+          UI.showWinningColor(tile);
+        });
+      });
+      return; // exit if a winner is found
+    }
+
+    turn = -turn;
+  };
+
+  const reset = () => {
+    turn = -1;
+    winner = 0;
+    gameBoard.reset();
+    UI.reset();
+  };
+
+  return {
+    getCurrentPlayer,
+    getWinner,
+    nextTurn,
+    reset,
+  };
+})();
+
 // const player = () => {};
 
 document.querySelectorAll(".tile").forEach((tile) => {
   tile.addEventListener("click", () => {
-    let y = Number(tile.id[0]);
-    let x = Number(tile.id[2]);
-    if (tile.innerHTML === "") {
-      gameBoard.mark(y, x, gameManager.getCurrentPlayer());
-      UI.mark(y, x, gameManager.getCurrentPlayer());
-      gameManager.nextTurn();
+    if (gameManager.getWinner() === 0) {
+      let r = Number(tile.id[0]);
+      let c = Number(tile.id[2]);
+      if (tile.innerHTML === "") {
+        let player = gameManager.getCurrentPlayer();
+        gameBoard.mark(r, c, player);
+        UI.mark(r, c, player);
+        gameManager.nextTurn();
+      }
     }
   });
 });
+
+// document.querySelector("#reset-btn").addEventListener("click", () => {
+//   gameManager.reset();
+// });
