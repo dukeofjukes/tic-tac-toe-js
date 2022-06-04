@@ -7,6 +7,14 @@ $board-line-color: $nord3;
 $winning-color: $nord14;
 $board-line-attr: 4px solid;
 
+@keyframes push{
+  50%  {transform: scale(0.9);}
+}
+
+@keyframes pop{
+  50%  {transform: scale(1.05);}
+}
+
 * {
   font-family: $font-stack;
 }
@@ -38,6 +46,14 @@ body {
     margin: 0;
   }
 
+  .tile:hover {
+    background-color: $nord1;
+  }
+
+  .tile:active {
+    animation: pop 0.1s linear 1;
+  }
+
   .winner {
     color: $winning-color;
   }
@@ -65,6 +81,10 @@ button {
   border: none;
   border-radius: 12px;
   color: $nord6;
+}
+
+button:active {
+  animation: push 0.1s linear 1;
 }
 
 #reset-btn {
