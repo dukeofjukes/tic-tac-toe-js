@@ -97,10 +97,23 @@ const gameBoard = (() => {
     return wins;
   };
 
+  const checkTie = () => {
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numCols; c++) {
+        if (board[r][c] === 0) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
   return {
     reset,
     mark,
     checkWin,
+    checkTie,
   };
 })();
 
@@ -108,6 +121,7 @@ const UI = (() => {
   const board = document.querySelector(".board");
   const tiles = board.querySelectorAll(".tile");
   const currentPlayerEl = document.querySelector("#current-player");
+  const statusEl = document.querySelector("#status");
   const xMarkHTML = `<i class="fa-solid fa-xmark"></i>`;
   const oMarkHTML = `<i class="fa-solid fa-o"></i>`;
 
@@ -120,11 +134,7 @@ const UI = (() => {
 
   const mark = (r, c, player) => {
     let tile = board.querySelector("#" + CSS.escape(r) + "-" + CSS.escape(c));
-    if (player > 0) {
-      tile.innerHTML = oMarkHTML;
-    } else if (player < 0) {
-      tile.innerHTML = xMarkHTML;
-    }
+    tile.innerHTML = player < 0 ? xMarkHTML : oMarkHTML;
   };
 
   const showWinningColor = (tile) => {
@@ -139,19 +149,28 @@ const UI = (() => {
     }
   };
 
-  const updateCurrentPlayer = (player) => {
-    if (player < 0) {
-      currentPlayerEl.innerHTML = xMarkHTML;
-    } else if (player > 0) {
-      currentPlayerEl.innerHTML = oMarkHTML;
-    }
+  const showCurrentPlayer = (player) => {
+    currentPlayerEl.innerHTML = player < 0 ? xMarkHTML : oMarkHTML;
+    statusEl.innerHTML = `'s turn.`;
+  };
+
+  const showWinner = (player) => {
+    currentPlayerEl.innerHTML = player < 0 ? xMarkHTML : oMarkHTML;
+    statusEl.innerHTML = `wins!`;
+  };
+
+  const showTie = () => {
+    currentPlayerEl.innerHTML = "";
+    statusEl.innerHTML = "Tie. Play again?";
   };
 
   return {
     reset,
     mark,
     showWinningColor,
-    updateCurrentPlayer,
+    showCurrentPlayer,
+    showWinner,
+    showTie,
   };
 })();
 
@@ -164,13 +183,13 @@ const gameManager = (() => {
    * {player 1: -1}
    * {player 2: 1}
    */
-  let turn = -1;
+  let currentPlayer = -1;
   let winner = 0;
 
   const getWinner = () => winner;
 
   const getCurrentPlayer = () => {
-    return turn;
+    return currentPlayer;
   };
 
   const nextTurn = () => {
@@ -186,18 +205,26 @@ const gameManager = (() => {
           UI.showWinningColor(tile);
         });
       });
+      UI.showWinner(winner);
       return; // exit if a winner is found
+    } else {
+      let tie = gameBoard.checkTie();
+      if (tie) {
+        UI.showTie();
+        return; // exit if tie
+      }
     }
 
-    turn = -turn;
-    UI.showCurrentPlayer(getCurrentPlayer());
+    currentPlayer = -currentPlayer;
+    UI.showCurrentPlayer(currentPlayer);
   };
 
   const reset = () => {
-    turn = -1;
+    currentPlayer = -1;
     winner = 0;
     gameBoard.reset();
     UI.reset();
+    UI.showCurrentPlayer(currentPlayer);
   };
 
   return {
@@ -211,7 +238,7 @@ const gameManager = (() => {
 // const player = () => {};
 
 document.addEventListener("DOMContentLoaded", () => {
-  UI.updateCurrentPlayer(gameManager.getCurrentPlayer());
+  UI.showCurrentPlayer(gameManager.getCurrentPlayer());
 });
 
 document.querySelectorAll(".tile").forEach((tile) => {
