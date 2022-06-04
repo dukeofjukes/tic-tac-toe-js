@@ -107,6 +107,7 @@ const gameBoard = (() => {
 const UI = (() => {
   const board = document.querySelector(".board");
   const tiles = board.querySelectorAll(".tile");
+  const currentPlayerEl = document.querySelector("#current-player");
   const xMarkHTML = `<i class="fa-solid fa-xmark"></i>`;
   const oMarkHTML = `<i class="fa-solid fa-o"></i>`;
 
@@ -138,10 +139,19 @@ const UI = (() => {
     }
   };
 
+  const updateCurrentPlayer = (player) => {
+    if (player < 0) {
+      currentPlayerEl.innerHTML = xMarkHTML;
+    } else if (player > 0) {
+      currentPlayerEl.innerHTML = oMarkHTML;
+    }
+  };
+
   return {
     reset,
     mark,
     showWinningColor,
+    updateCurrentPlayer,
   };
 })();
 
@@ -180,6 +190,7 @@ const gameManager = (() => {
     }
 
     turn = -turn;
+    UI.showCurrentPlayer(getCurrentPlayer());
   };
 
   const reset = () => {
@@ -198,6 +209,10 @@ const gameManager = (() => {
 })();
 
 // const player = () => {};
+
+document.addEventListener("DOMContentLoaded", () => {
+  UI.updateCurrentPlayer(gameManager.getCurrentPlayer());
+});
 
 document.querySelectorAll(".tile").forEach((tile) => {
   tile.addEventListener("click", () => {
