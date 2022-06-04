@@ -23,11 +23,11 @@ const gameBoard = (() => {
   ];
 
   const reset = () => {
-    board.forEach((row) => {
-      row.forEach((cell) => {
-        cell = 0;
-      });
-    });
+    board = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
   };
 
   const mark = (r, c, player) => {
@@ -214,6 +214,6 @@ document.querySelectorAll(".tile").forEach((tile) => {
   });
 });
 
-// document.querySelector("#reset-btn").addEventListener("click", () => {
-//   gameManager.reset();
-// });
+document.querySelector("#reset-btn").addEventListener("click", () => {
+  gameManager.reset();
+});

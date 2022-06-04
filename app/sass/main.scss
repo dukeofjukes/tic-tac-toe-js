@@ -24,7 +24,7 @@ body {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   width: 400px;
-  margin: 200px auto;
+  margin: 200px auto 100px auto;
 
   .tile {
     display: grid;
@@ -57,4 +57,18 @@ body {
   .remove-right {
     border-right: $board-line-attr transparent;
   }
+}
+
+button {
+  font-size: 1.2rem;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  color: $nord6;
+}
+
+#reset-btn {
+  background-color: $nord11;
+  display: flex;
+  margin: auto;
 }
