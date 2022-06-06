@@ -1,16 +1,10 @@
 /*
   TODO:
-  - gamemanager obj using module
-    - handles game flow
-      - game over
-      - restart
-    - checks win states / tie
   - player obj using factory
     - start with two identical human players
     - once everything works, make an AI
     - allow user to choose which player(s) are bots
       - so you can watch two bots play lol
-  - finally, clean up interface into something pretty
 */
 
 const gameBoard = (() => {
@@ -118,6 +112,7 @@ const gameBoard = (() => {
 })();
 
 const UI = (() => {
+  const modalEl = document.querySelector(".modal");
   const board = document.querySelector(".board");
   const tiles = board.querySelectorAll(".tile");
   const currentPlayerEl = document.querySelector("#current-player");
@@ -164,6 +159,14 @@ const UI = (() => {
     statusEl.innerHTML = "Tie. Play again?";
   };
 
+  const showModal = () => {
+    modalEl.style.display = "block";
+  };
+
+  const hideModal = () => {
+    modalEl.Style.display = "none";
+  };
+
   return {
     reset,
     mark,
@@ -171,6 +174,8 @@ const UI = (() => {
     showCurrentPlayer,
     showWinner,
     showTie,
+    showModal,
+    hideModal,
   };
 })();
 
@@ -235,11 +240,27 @@ const gameManager = (() => {
   };
 })();
 
-// const player = () => {};
+const player = (value, computer = false) => {
+  const getValue = () => value;
+  const setIsComputer = (comp) => (computer = comp);
+  const isComputer = () => computer;
+
+  return {
+    getValue,
+    setIsComputer,
+    isComputer,
+  };
+};
+
+let player1 = player(-1);
+let player2 = player(1);
 
 document.addEventListener("DOMContentLoaded", () => {
+  // UI.showModal();
   UI.showCurrentPlayer(gameManager.getCurrentPlayer());
 });
+
+// TODO: create listeners for modal button clicks (toggle styling, change player attribute)
 
 document.querySelectorAll(".tile").forEach((tile) => {
   tile.addEventListener("click", () => {

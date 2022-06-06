@@ -12,6 +12,28 @@
     <title>Tic Tac Toe</title>
   </head>
   <body>
+    <div class="modal">
+      <div class="card">
+        <h1>Tic Tac Toe</h1>
+        <div class="columns">
+          <div class="column">
+            <h2>Player 1</h2>
+            <div class="columns">
+              <button class="selected" id="player-1-human">human</button>
+              <button id="player-2-comp">comp</button>
+            </div>
+          </div>
+          <div class="column">
+            <h2>Player 2</h2>
+            <div class="columns">
+              <button class="selected" id="player-2-human">human</button>
+              <button id="player-2-comp">comp</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="board">
       <div class="tile remove-left remove-top" id="0-0"></div>
       <div class="tile remove-top" id="0-1"></div>
@@ -24,7 +46,7 @@
       <div class="tile remove-bottom remove-right" id="2-2"></div>
     </div>
 
-    <div class="message"><i id="current-player"></i> <i id="status">aa</i></div>
+    <div class="message"><i id="current-player"></i> <i id="status"></i></div>
 
     <button id="reset-btn">reset</button>
 
