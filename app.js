@@ -314,6 +314,22 @@ document.querySelector("#player-2-comp").addEventListener("click", (e) => {
 });
 
 document.querySelectorAll(".tile").forEach((tile) => {
+  /*
+  tile.addEventListener("click", () => {
+    if (gameManager.getWinner() === 0) {
+      let r = Number(tile.id[0]);
+      let c = Number(tile.id[2]);
+      gameManager.handleClick(r, c);
+      // handleClick() will check whose turn it is,
+      // then check if that player is a human.
+      // if human, it will place the tile
+      // if comp, it will ignore the click  
+
+      // comp moves will be handled in gameManager.nextTurn() ???
+    }
+  })
+  */
+
   tile.addEventListener("click", () => {
     if (gameManager.getWinner() === 0) {
       let r = Number(tile.id[0]);
