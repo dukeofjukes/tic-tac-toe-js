@@ -26,8 +26,6 @@ body {
 }
 
 .modal {
-  // background: rgb(0, 0, 0);
-  // background-color: rgba(0, 0, 0, 30%);
   display: none;
   position: fixed;
   top: 0;
@@ -124,6 +122,12 @@ body {
   }
 }
 
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
 button {
   font-size: 1.2rem;
   padding: 12px 32px;
@@ -140,7 +144,16 @@ button:active {
 #reset-btn {
   background-color: $nord11;
   display: flex;
-  margin: auto;
+}
+
+#new-game-btn {
+  background-color: $nord10;
+}
+
+#confirm-btn {
+  background-color: $nord10; 
+  display: flex;
+  margin: 40px auto 0 auto;
 }
 
 .message {

@@ -164,7 +164,7 @@ const UI = (() => {
   };
 
   const hideModal = () => {
-    modalEl.Style.display = "none";
+    modalEl.style.display = "none";
   };
 
   return {
@@ -256,11 +256,62 @@ let player1 = player(-1);
 let player2 = player(1);
 
 document.addEventListener("DOMContentLoaded", () => {
-  // UI.showModal();
+  UI.showModal();
   UI.showCurrentPlayer(gameManager.getCurrentPlayer());
 });
 
 // TODO: create listeners for modal button clicks (toggle styling, change player attribute)
+document.querySelector("#confirm-btn").addEventListener("click", () => {
+  if (document.querySelector("#player-1-comp").classList.contains("selected")) {
+    player1.setIsComputer(true);
+  } else {
+    player1.setIsComputer(false);
+  }
+
+  if (document.querySelector("#player-2-comp").classList.contains("selected")) {
+    player2.setIsComputer(true);
+  } else {
+    player2.setIsComputer(false);
+  }
+
+  UI.hideModal();
+});
+
+document.querySelector("#player-1-human").addEventListener("click", (e) => {
+  if (e.target.classList.contains("selected")) {
+    return;
+  } else {
+    e.target.classList.add("selected");
+    document.querySelector("#player-1-comp").classList.remove("selected");
+  }
+});
+
+document.querySelector("#player-1-comp").addEventListener("click", (e) => {
+  if (e.target.classList.contains("selected")) {
+    return;
+  } else {
+    e.target.classList.add("selected");
+    document.querySelector("#player-1-human").classList.remove("selected");
+  }
+});
+
+document.querySelector("#player-2-human").addEventListener("click", (e) => {
+  if (e.target.classList.contains("selected")) {
+    return;
+  } else {
+    e.target.classList.add("selected");
+    document.querySelector("#player-2-comp").classList.remove("selected");
+  }
+});
+
+document.querySelector("#player-2-comp").addEventListener("click", (e) => {
+  if (e.target.classList.contains("selected")) {
+    return;
+  } else {
+    e.target.classList.add("selected");
+    document.querySelector("#player-2-human").classList.remove("selected");
+  }
+});
 
 document.querySelectorAll(".tile").forEach((tile) => {
   tile.addEventListener("click", () => {
@@ -279,4 +330,9 @@ document.querySelectorAll(".tile").forEach((tile) => {
 
 document.querySelector("#reset-btn").addEventListener("click", () => {
   gameManager.reset();
+});
+
+document.querySelector("#new-game-btn").addEventListener("click", () => {
+  gameManager.reset();
+  UI.showModal();
 });
