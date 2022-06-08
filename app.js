@@ -16,6 +16,8 @@ const gameBoard = (() => {
     [0, 0, 0],
   ];
 
+  const getTileValue = (r, c) => board[r][c];
+
   const reset = () => {
     board = [
       [0, 0, 0],
@@ -104,6 +106,7 @@ const gameBoard = (() => {
   };
 
   return {
+    getTileValue,
     reset,
     mark,
     checkWin,
@@ -220,8 +223,22 @@ const gameManager = (() => {
       }
     }
 
+    // switch player
     currentPlayer = -currentPlayer;
     UI.showCurrentPlayer(currentPlayer);
+
+    let player;
+    if (currentPlayer === -1) {
+      player = player1;
+    } else {
+      player = player2;
+    }
+
+    // call computer logic if the current player is a computer
+    if (player.isComputer()) {
+      console.log("is computer");
+      player.computeMove();
+    }
   };
 
   const reset = () => {
@@ -232,11 +249,31 @@ const gameManager = (() => {
     UI.showCurrentPlayer(currentPlayer);
   };
 
+  const handleClick = (r, c) => {
+    if (player1.getValue() === currentPlayer) {
+      if (!player1.isComputer()) {
+        gameBoard.mark(r, c, currentPlayer);
+        UI.mark(r, c, currentPlayer);
+        nextTurn();
+        return;
+      }
+    }
+    if (player2.getValue() === currentPlayer) {
+      if (!player2.isComputer()) {
+        gameBoard.mark(r, c, currentPlayer);
+        UI.mark(r, c, currentPlayer);
+        nextTurn();
+        return;
+      }
+    }
+  };
+
   return {
     getCurrentPlayer,
     getWinner,
-    nextTurn,
     reset,
+    nextTurn,
+    handleClick,
   };
 })();
 
@@ -245,10 +282,25 @@ const player = (value, computer = false) => {
   const setIsComputer = (comp) => (computer = comp);
   const isComputer = () => computer;
 
+  const computeMove = () => {
+    // NOTE: placeholder logic until I write minimax
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        if (gameBoard.getTileValue(r, c) === 0) {
+          gameBoard.mark(r, c, gameManager.getCurrentPlayer());
+          UI.mark(r, c, gameManager.getCurrentPlayer());
+          gameManager.nextTurn();
+          return;
+        }
+      }
+    }
+  };
+
   return {
     getValue,
     setIsComputer,
     isComputer,
+    computeMove,
   };
 };
 
@@ -260,7 +312,6 @@ document.addEventListener("DOMContentLoaded", () => {
   UI.showCurrentPlayer(gameManager.getCurrentPlayer());
 });
 
-// TODO: create listeners for modal button clicks (toggle styling, change player attribute)
 document.querySelector("#confirm-btn").addEventListener("click", () => {
   if (document.querySelector("#player-1-comp").classList.contains("selected")) {
     player1.setIsComputer(true);
@@ -275,6 +326,11 @@ document.querySelector("#confirm-btn").addEventListener("click", () => {
   }
 
   UI.hideModal();
+
+  // kickstart logic if player1 is a computer
+  if (player1.isComputer()) {
+    player1.computeMove();
+  }
 });
 
 document.querySelector("#player-1-human").addEventListener("click", (e) => {
@@ -314,31 +370,12 @@ document.querySelector("#player-2-comp").addEventListener("click", (e) => {
 });
 
 document.querySelectorAll(".tile").forEach((tile) => {
-  /*
-  tile.addEventListener("click", () => {
-    if (gameManager.getWinner() === 0) {
-      let r = Number(tile.id[0]);
-      let c = Number(tile.id[2]);
-      gameManager.handleClick(r, c);
-      // handleClick() will check whose turn it is,
-      // then check if that player is a human.
-      // if human, it will place the tile
-      // if comp, it will ignore the click  
-
-      // comp moves will be handled in gameManager.nextTurn() ???
-    }
-  })
-  */
-
   tile.addEventListener("click", () => {
     if (gameManager.getWinner() === 0) {
       let r = Number(tile.id[0]);
       let c = Number(tile.id[2]);
       if (tile.innerHTML === "") {
-        let player = gameManager.getCurrentPlayer();
-        gameBoard.mark(r, c, player);
-        UI.mark(r, c, player);
-        gameManager.nextTurn();
+        gameManager.handleClick(r, c);
       }
     }
   });
@@ -346,6 +383,11 @@ document.querySelectorAll(".tile").forEach((tile) => {
 
 document.querySelector("#reset-btn").addEventListener("click", () => {
   gameManager.reset();
+
+  // kickstart logic if player1 is a computer
+  if (player1.isComputer()) {
+    player1.computeMove();
+  }
 });
 
 document.querySelector("#new-game-btn").addEventListener("click", () => {
