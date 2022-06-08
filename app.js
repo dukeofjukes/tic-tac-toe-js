@@ -16,6 +16,7 @@ const gameBoard = (() => {
     [0, 0, 0],
   ];
 
+  const getBoard = () => board;
   const getTileValue = (r, c) => board[r][c];
 
   const reset = () => {
@@ -236,7 +237,6 @@ const gameManager = (() => {
 
     // call computer logic if the current player is a computer
     if (player.isComputer()) {
-      console.log("is computer");
       player.computeMove();
     }
   };
@@ -283,17 +283,88 @@ const player = (value, computer = false) => {
   const isComputer = () => computer;
 
   const computeMove = () => {
-    // NOTE: placeholder logic until I write minimax
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        if (gameBoard.getTileValue(r, c) === 0) {
-          gameBoard.mark(r, c, gameManager.getCurrentPlayer());
-          UI.mark(r, c, gameManager.getCurrentPlayer());
-          gameManager.nextTurn();
-          return;
+    let node = node(board);
+    let move = minimaxAB(
+      node,
+      3,
+      Number.MIN_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
+      true
+    );
+
+    let r = move[0];
+    let c = move[1];
+
+    gameBoard.mark(r, c, gameManager.getCurrentPlayer());
+    UI.mark(r, c, gameManager.getCurrentPlayer());
+    gameManager.nextTurn();
+  };
+
+  const minimaxAB = (node, depth, a, b, maximizingPlayer) => {
+    if (depth === 0 || !node.hasChildren()) {
+      return evaluateBoard(node.getBoard());
+    }
+
+    let children = node.getChildren();
+
+    if (maximizingPlayer) {
+      let value = Number.MIN_SAFE_INTEGER;
+      for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        value = Math.max(value, minimaxAB(child, depth - 1, a, b, false));
+        if (value >= b) {
+          break;
         }
+        a = Math.max(a, value);
+      }
+      return value;
+    } else {
+      let value = Number.MAX_SAFE_INTEGER;
+      for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        value = Math.min(value, minimaxAB(child, depth - 1, a, b, true));
+        if (value <= a) {
+          break;
+        }
+        b = Math.min(b, value);
+      }
+      return value;
+    }
+  };
+
+  const evaluateBoard = (board) => {
+    // TODO
+    /*
+    // from https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-2-evaluation-function/
+    // Checking for Rows for X or O victory.
+    for (let row = 0; row < 3; row++) {
+      if (board[row][0] == board[row][1] && board[row][1] == board[row][2]) {
+        if (board[row][0] == "x") return +10;
+        else if (board[row][0] == "o") return -10;
       }
     }
+
+    // Checking for Columns for X or O victory.
+    for (let col = 0; col < 3; col++) {
+      if (board[0][col] == board[1][col] && board[1][col] == board[2][col]) {
+        if (board[0][col] == "x") return +10;
+        else if (board[0][col] == "o") return -10;
+      }
+    }
+
+    // Checking for Diagonals for X or O victory.
+    if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+      if (board[0][0] == "x") return +10;
+      else if (board[0][0] == "o") return -10;
+    }
+    if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+      if (board[0][2] == "x") return +10;
+      else if (board[0][2] == "o") return -10;
+    }
+
+    // Else if none of them have won then return 0
+    return 0;
+    */
   };
 
   return {
@@ -301,6 +372,19 @@ const player = (value, computer = false) => {
     setIsComputer,
     isComputer,
     computeMove,
+  };
+};
+
+const node = (board) => {
+  let children = [];
+
+  const getChildren = () => children;
+
+  const hasChildren = () => {
+    if (children.length === 0) {
+      return false;
+    }
+    return true;
   };
 };
 
