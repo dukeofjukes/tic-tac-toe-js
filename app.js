@@ -16,7 +16,7 @@ const gameBoard = (() => {
     [0, 0, 0],
   ];
 
-  const getBoard = () => board;
+  const getBoard = () => [...board];
   const getTileValue = (r, c) => board[r][c];
 
   const reset = () => {
@@ -107,6 +107,7 @@ const gameBoard = (() => {
   };
 
   return {
+    getBoard,
     getTileValue,
     reset,
     mark,
@@ -283,10 +284,12 @@ const player = (value, computer = false) => {
   const isComputer = () => computer;
 
   const computeMove = () => {
-    let node = node(board);
+    let root = node(gameBoard.getBoard());
+    console.log("making tree");
+    root.createTree(-value, 1);
     let move = minimaxAB(
-      node,
-      3,
+      root,
+      1,
       Number.MIN_SAFE_INTEGER,
       Number.MAX_SAFE_INTEGER,
       true
@@ -301,6 +304,7 @@ const player = (value, computer = false) => {
   };
 
   const minimaxAB = (node, depth, a, b, maximizingPlayer) => {
+    console.log("in minimax");
     if (depth === 0 || !node.hasChildren()) {
       return evaluateBoard(node.getBoard());
     }
@@ -378,6 +382,24 @@ const player = (value, computer = false) => {
 const node = (board) => {
   let children = [];
 
+  const createTree = (piece, depth) => {
+    console.log(board);
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        if (board[r][c] === 0) {
+          let newBoard = [...board];
+          newBoard[r][c] = Number(piece);
+          console.log("new board", newBoard);
+          let newNode = node(newBoard);
+          newNode.createTree(-piece, depth - 1);
+          children.push(newBoard);
+        }
+      }
+    }
+
+    // console.log(children);
+  };
+
   const getChildren = () => children;
 
   const hasChildren = () => {
@@ -385,6 +407,12 @@ const node = (board) => {
       return false;
     }
     return true;
+  };
+
+  return {
+    createTree,
+    getChildren,
+    hasChildren,
   };
 };
 
